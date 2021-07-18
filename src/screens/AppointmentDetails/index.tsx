@@ -14,8 +14,6 @@ import {
   Platform
 } from 'react-native';
 
-import BannerImg from '../../assets/banner.png';
-
 import { theme } from '../../global/styles/theme';
 import { api } from '../../services/api';
 import { styles } from './styles';
@@ -28,6 +26,8 @@ import { ListHeader } from '../../components/ListHeader';
 import { ButtonIcon } from '../../components/ButtonIcon';
 import { Header } from '../../components/Header';
 import { Load } from '../../components/Load';
+
+const { CDN_IMAGE} = process.env
 
 type Params = {
   guildSelected: AppointmentProps
@@ -47,13 +47,16 @@ export function AppointmentDetails() {
   const route = useRoute();
   const { guildSelected } = route.params as Params;
 
+  const uri= `${CDN_IMAGE}/icons/${guildSelected.guild.id}/${guildSelected.guild.icon}.png`;
+  const imageGuild = { uri: uri};
+
   async function fetchGuildWidget() {
     try {
       const response = await api.get(`/guilds/${guildSelected.guild.id}/widget.json`);
       setWidget(response.data);
     } catch {
       
-      Alert.alert('Verifique as configurações do servidor. Será que o Widget está habilitado?');
+      Alert.alert('Verifique as configurações do servidor!', 'Ative o widget no seu servidor do discord em configurações do servidor.');
     } finally {
       setLoading(false);
     }
@@ -96,7 +99,7 @@ export function AppointmentDetails() {
       />
 
       <ImageBackground
-        source={BannerImg}
+        source={imageGuild}
         style={styles.banner}
       >
         <View style={styles.bannerContent}>
